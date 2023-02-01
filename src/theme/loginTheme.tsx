@@ -50,5 +50,10 @@ export const loginTheme = StyleSheet.create({
     newAccountText:{
         fontSize: 16,
         color: 'white',
+    },
+    backButton: {
+        position: 'absolute',
+        top: 120,
+        left: 0,
     }
 })  
