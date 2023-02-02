@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useReducer } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import cafeApi from "../api/cafeApi";
-import { LoginData, LoginResponse, User } from '../interfaces/users';
+import { LoginData, LoginResponse, RegisterData, User } from '../interfaces/users';
 import { authReducer, AuthState } from "./authReducer";
 
 type AuthContextProps = {
@@ -10,7 +10,7 @@ type AuthContextProps = {
     user: User | null;
     status: 'checking' | 'authenticated' | 'not-authenticated';
     signIn: ( loginData: LoginData ) => void;
-    signOut: () => void;
+    signUp: ( registerData: RegisterData ) => void;
     logOut: () => void;
     removeError: () => void;
 }
@@ -76,7 +76,24 @@ export const AuthProvider = ({ children }:any) => {
         }
     }
 
-    const signOut = () => {}
+    const signUp = async( registerData: RegisterData ) => {
+        try {
+            const { data } = await cafeApi.post<LoginResponse>( '/user/', registerData )
+            dispatch({
+                type: 'signUp',
+                payload: {
+                    user: data.user,
+                    token: data.token,
+                }
+            })
+            AsyncStorage.setItem( 'token', data.token )
+        } catch ( error: any ) {
+            dispatch({ 
+                type: 'addError',
+                payload: error.response.data.msg || 'Datos no válidos'
+            })
+        }
+    }
 
     const logOut = () => {
         dispatch({ type: 'logOut' })
@@ -91,7 +108,7 @@ export const AuthProvider = ({ children }:any) => {
         <AuthContext.Provider value={{
             ...state,
             signIn,
-            signOut,
+            signUp,
             logOut,
             removeError,
         }}>
