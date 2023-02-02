@@ -88,9 +88,10 @@ export const AuthProvider = ({ children }:any) => {
             })
             AsyncStorage.setItem( 'token', data.token )
         } catch ( error: any ) {
+            const errorObject = await error.response.data
             dispatch({ 
                 type: 'addError',
-                payload: error.response.data.msg || 'Datos no válidos'
+                payload: errorObject.errors[0].msg || 'Datos no válidos'
             })
         }
     }
