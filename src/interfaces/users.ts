@@ -1,4 +1,12 @@
+export interface LoginData {
+    email: string;
+    password: string;
+}
 
+export interface LoginResponse {
+    user:  User;
+    token: string;
+}
 
 export interface UsersResponse {
     total: number;
@@ -14,3 +22,7 @@ export interface User {
     img?:   string;
     uid:    string;
 }
+
+
+
+
