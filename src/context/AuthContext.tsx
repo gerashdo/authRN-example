@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useReducer } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import cafeApi from "../api/cafeApi";
-import { LoginData, LoginResponse, User } from "../interfaces/users";
+import { LoginData, LoginResponse, User } from '../interfaces/users';
 import { authReducer, AuthState } from "./authReducer";
 
 type AuthContextProps = {
@@ -38,13 +38,14 @@ export const AuthProvider = ({ children }:any) => {
         if( !token ) return dispatch({ type: 'notAuthenticated' })
 
         // If there is any token
-        const response = await cafeApi.get('/auth/')
+        const response = await cafeApi.get<LoginResponse>('/auth/')
 
         //If it has expired
         if( response.status !== 200 ){
             dispatch({ type: 'notAuthenticated' })
         }
 
+        AsyncStorage.setItem( 'token', response.data.token )
         dispatch({
             type: 'signUp',
             payload: {
