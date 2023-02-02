@@ -38,12 +38,17 @@ export const AuthProvider = ({ children }:any) => {
                 }
             })
         } catch ( error: any ) {
-            console.log(error.response.data)
+            dispatch({
+                type: 'addError',
+                payload: error.response.data.msg || 'Informació incorrecta'
+            })
         }
     }
     const signOut = () => {}
     const logOut = () => {}
-    const removeError = () => {}
+    const removeError = () => {
+        dispatch({ type: 'removeError' })
+    }
 
     return(
         <AuthContext.Provider value={{
