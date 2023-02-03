@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { ProductScreen } from '../screens/ProductScreen'
 import { ProductsScreen } from '../screens/ProductsScreen'
 
-type ProductStackParams = {
+export type ProductStackParams = {
     ProductsScreen: undefined,
     ProductScreen: { id?: string, name?: string }
 }

@@ -1,10 +1,30 @@
 import React, { useContext } from 'react'
+import { useEffect } from 'react';
+import { StackScreenProps } from '@react-navigation/stack'
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { ProductsContext } from '../context/ProductsContext'
 
-export const ProductsScreen = () => {
+import { ProductsContext } from '../context/ProductsContext'
+import { ProductStackParams } from '../navigation/ProductsNavigator'
+
+interface Props extends StackScreenProps<ProductStackParams, 'ProductsScreen'>{}
+
+export const ProductsScreen = ({ navigation }: Props) => {
 
     const { products, loadProducts } = useContext( ProductsContext )
+
+    useEffect(() => {
+      navigation.setOptions({
+        headerRight: () => (
+            <TouchableOpacity
+                style={{ marginRight: 20 }}
+                activeOpacity={ 0.7 }
+                onPress={ () => navigation.navigate('ProductScreen', { name: 'Nuevo producto' } )}
+            >
+                <Text>Agregar</Text>
+            </TouchableOpacity>
+        )
+      })
+    }, [])
     
     return (
         <View style={ styles.container }>
@@ -14,6 +34,10 @@ export const ProductsScreen = () => {
                 renderItem={ ({ item }) => (
                     <TouchableOpacity
                         activeOpacity={ 0.7 }
+                        onPress={ () => navigation.navigate('ProductScreen', {
+                            name: item.name,
+                            id: item._id
+                        })}
                     >
                         <Text style={ styles.productName }>{ item.name }</Text>
                     </TouchableOpacity>
