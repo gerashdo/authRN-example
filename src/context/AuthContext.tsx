@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }:any) => {
     
     const checkToken = async() => {
         const token = await AsyncStorage.getItem('token')
+        console.log( token )
         
         // If there is no token
         if( !token ) return dispatch({ type: 'notAuthenticated' })
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }:any) => {
 
         //If it has expired
         if( response.status !== 200 ){
-            dispatch({ type: 'notAuthenticated' })
+            return dispatch({ type: 'notAuthenticated' })
         }
 
         AsyncStorage.setItem( 'token', response.data.token )
