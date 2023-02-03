@@ -8,7 +8,7 @@ interface ProductsContextProps {
     // addProduct: ( categoryId: string, productName: string ) => Promise<void>;
     // updateProduct: ( categoryId: string, productName: string, productId: string ) => Promise<void>;
     // deleteProduct: ( id: string ) => Promise<void>;
-    // loadProductById: ( id: string ) => Promise<Product>;
+    loadProductById: ( id: string ) => Promise<Product>;
     // uploadImage: ( id: string, data: any ) => Promise<void>;
 }
 
@@ -28,10 +28,16 @@ export const ProductsProvider = ({ children }: any) => {
         setProducts([ ...data.products ])
     }
 
+    const loadProductById = async( id: string ): Promise<Product> => {
+        const { data } = await cafeApi.get<Product>( `/product/${ id }` )
+        return data
+    }
+
     return (
         <ProductsContext.Provider value={{
             products,
             loadProducts,
+            loadProductById,
         }}>
             { children }
         </ProductsContext.Provider>

@@ -1,24 +1,54 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { StackScreenProps } from '@react-navigation/stack'
 
 import {Picker} from '@react-native-picker/picker';
 
 import { ProductStackParams } from '../navigation/ProductsNavigator'
+import { useCategories } from '../hooks/useCategories';
+import { ProductsContext } from '../context/ProductsContext';
+import { useForm } from '../hooks/useForm';
+import { Product } from '../interfaces/products';
 
 interface Props extends StackScreenProps<ProductStackParams, 'ProductScreen'>{}
 
 export const ProductScreen = ({ route, navigation }: Props) => {
 
-    const { name = '', id } = route.params
+    const { name = '', id = '' } = route.params
     
     const [selectedLanguage, setSelectedLanguage] = useState();
+    const { categories } = useCategories()
+    const { loadProductById } = useContext( ProductsContext )
+
+    const { category, img, onChange, form, setFormValues } = useForm({
+        _id: id,
+        name: name,
+        category: '',
+        img: '',
+    })
 
     useEffect(() => {
       navigation.setOptions({
         title: name,
       })
     }, [])
+
+    useEffect( () => {
+        loadProduct()
+    }, [])
+
+    const loadProduct = async() => {
+        if( id.length === 0 ) return;
+
+        const product: Product = await loadProductById( id )
+        setFormValues({
+            _id: id,
+            name,
+            category: product.category._id,
+            img: product.img || '',
+        })
+    }
+
     
     return (
         <View style={ styles.container }>
@@ -28,6 +58,8 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                     placeholder='Ingrese el nombre'
                     placeholderTextColor='rgba(0,0,0,0.5)'
                     style={ styles.textInput }
+                    value={ name }
+                    onChangeText={ ( value ) => onChange( value, 'name' ) }
                 />
                 <Text style={ styles.lablel }>Categoria:</Text>
                 <Picker
@@ -36,8 +68,15 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                         setSelectedLanguage(itemValue)
                     }
                 >
-                    <Picker.Item label="Java" value="java" />
-                    <Picker.Item label="JavaScript" value="js" />
+                    {
+                        categories.map( category => (
+                            <Picker.Item
+                                key={ category._id }
+                                label={ category.name } 
+                                value={ category._id } 
+                            />
+                        ))
+                    }
                 </Picker>
 
                 <Button 
@@ -65,6 +104,10 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                         color="#066EC2"
                     />
                 </View>
+
+                <Text>
+                    { JSON.stringify( form, null, 4 )}
+                </Text>
                 
             </ScrollView>
         </View>
