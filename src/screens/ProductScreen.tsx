@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
-import { StackScreenProps } from '@react-navigation/stack'
+import React, { useContext, useEffect } from 'react'
+import { Button, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { StackScreenProps } from '@react-navigation/stack'
 import {Picker} from '@react-native-picker/picker';
 
 import { ProductStackParams } from '../navigation/ProductsNavigator'
@@ -15,8 +15,6 @@ interface Props extends StackScreenProps<ProductStackParams, 'ProductScreen'>{}
 export const ProductScreen = ({ route, navigation }: Props) => {
 
     const { name = '', id = '' } = route.params
-    
-    const [selectedLanguage, setSelectedLanguage] = useState();
     const { categories } = useCategories()
     const { loadProductById } = useContext( ProductsContext )
 
@@ -63,9 +61,9 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                 />
                 <Text style={ styles.lablel }>Categoria:</Text>
                 <Picker
-                    selectedValue={selectedLanguage}
-                    onValueChange={(itemValue, itemIndex) =>
-                        setSelectedLanguage(itemValue)
+                    selectedValue={ category }
+                    onValueChange={( value ) =>
+                        onChange( value, 'category' )
                     }
                 >
                     {
@@ -105,9 +103,18 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                     />
                 </View>
 
-                <Text>
-                    { JSON.stringify( form, null, 4 )}
-                </Text>
+                {
+                    img.length > 0 && (
+                        <Image 
+                            source={{ uri: img }}
+                            style={{
+                                marginTop: 10,
+                                height: 300,
+                                width: '100%'
+                            }}
+                        />
+                    )
+                }
                 
             </ScrollView>
         </View>
