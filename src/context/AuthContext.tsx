@@ -32,29 +32,27 @@ export const AuthProvider = ({ children }:any) => {
     }, [])
     
     const checkToken = async() => {
-        const token = await AsyncStorage.getItem('token')
-        console.log( token )
-        
-        // If there is no token
-        if( !token ) return dispatch({ type: 'notAuthenticated' })
+        try{
+            const token = await AsyncStorage.getItem('token')
+            console.log( token )
+            
+            // If there is no token
+            if( !token ) return dispatch({ type: 'notAuthenticated' })
 
-        // If there is any token
-        const response = await cafeApi.get<LoginResponse>('/auth/')
+            // If there is any token
+            const response = await cafeApi.get<LoginResponse>('/auth/')
 
-        //If it has expired
-        if( response.status !== 200 ){
+            AsyncStorage.setItem( 'token', response.data.token )
+            dispatch({
+                type: 'signUp',
+                payload: {
+                    user: response.data.user,
+                    token: response.data.token,
+                }
+            })
+        }catch( error ){
             return dispatch({ type: 'notAuthenticated' })
         }
-
-        AsyncStorage.setItem( 'token', response.data.token )
-        dispatch({
-            type: 'signUp',
-            payload: {
-                user: response.data.user,
-                token: response.data.token,
-            }
-        })
-
     }
 
     const signIn = async( loginData: LoginData ) => {
