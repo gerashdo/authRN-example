@@ -58,8 +58,21 @@ export const ProductScreen = ({ route, navigation }: Props) => {
         }
     }
 
-    const takeProductPucture = () => {
+    const takePictureFromCamera = () => {
         launchCamera({
+            mediaType: 'photo',
+            quality: 0.5,
+        }, ( resp ) => {
+            if( resp.didCancel ) return;
+            if( !resp.assets![0].uri ) return;
+
+            setTempImage( resp.assets![0].uri )
+            uploadImage( productId, resp )
+        });
+    }
+
+    const takePictureFromGalery = () => {
+        launchImageLibrary({
             mediaType: 'photo',
             quality: 0.5,
         }, ( resp ) => {
@@ -119,12 +132,12 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                         >
                             <Button 
                                 title='Camara'
-                                onPress={ takeProductPucture }
+                                onPress={ takePictureFromCamera }
                                 color="#066EC2"
                             />
                             <Button 
                                 title='Galeria'
-                                onPress={ () => {} }
+                                onPress={ takePictureFromGalery }
                                 color="#066EC2"
                             />
                         </View>

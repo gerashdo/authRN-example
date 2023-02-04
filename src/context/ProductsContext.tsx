@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { ImagePickerResponse } from "react-native-image-picker";
+import { Platform } from "react-native";
 import cafeApi from "../api/cafeApi";
 import { Product, ProductsResponse } from "../interfaces/products";
 
@@ -59,7 +60,9 @@ export const ProductsProvider = ({ children }: any) => {
         const params = {
             type: data.assets![0].type!,
             name: data.assets![0].fileName!,
-            uri: data.assets![0].uri!,
+            uri: ( Platform.OS === 'ios' ) 
+                ? data.assets![0].uri!.replace('file://', '')
+                : data.assets![0].uri!,
         }
 
         const fileToUpload = JSON.parse( JSON.stringify(params))
