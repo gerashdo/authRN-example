@@ -43,7 +43,15 @@ export const ProductsProvider = ({ children }: any) => {
     }
 
     const updateProduct = async( categoryId: string, productName: string, productId: string ) => {
-        console.log( 'updating ')
+        const { data } = await cafeApi.put<Product>( `/product/${ productId }`, {
+            name: productName,
+            category: categoryId,
+        })
+        setProducts( products.map( product => {
+            return ( product._id === productId )
+                ? data
+                : product
+        }))
     }
 
     return (
