@@ -17,7 +17,7 @@ export const ProductScreen = ({ route, navigation }: Props) => {
 
     const { name = '', id = '' } = route.params
     const { categories } = useCategories()
-    const { loadProductById, addProduct, updateProduct } = useContext( ProductsContext )
+    const { loadProductById, addProduct, updateProduct, uploadImage } = useContext( ProductsContext )
     const [tempImage, setTempImage] = useState<string>()
 
     const { _id: productId, name: productName ,category, img, onChange, form, setFormValues } = useForm({
@@ -67,6 +67,7 @@ export const ProductScreen = ({ route, navigation }: Props) => {
             if( !resp.assets![0].uri ) return;
 
             setTempImage( resp.assets![0].uri )
+            uploadImage( productId, resp )
         });
     }
 
