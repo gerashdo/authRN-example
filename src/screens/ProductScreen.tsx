@@ -1,6 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { StackScreenProps } from '@react-navigation/stack'
 import {Picker} from '@react-native-picker/picker';
 
@@ -17,6 +18,7 @@ export const ProductScreen = ({ route, navigation }: Props) => {
     const { name = '', id = '' } = route.params
     const { categories } = useCategories()
     const { loadProductById, addProduct, updateProduct } = useContext( ProductsContext )
+    const [tempImage, setTempImage] = useState<string>()
 
     const { _id: productId, name: productName ,category, img, onChange, form, setFormValues } = useForm({
         _id: id,
@@ -54,6 +56,18 @@ export const ProductScreen = ({ route, navigation }: Props) => {
         }else{
             updateProduct( category, productName, productId )
         }
+    }
+
+    const takeProductPucture = () => {
+        launchCamera({
+            mediaType: 'photo',
+            quality: 0.5,
+        }, ( resp ) => {
+            if( resp.didCancel ) return;
+            if( !resp.assets![0].uri ) return;
+
+            setTempImage( resp.assets![0].uri )
+        });
     }
 
     
@@ -103,12 +117,12 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                             }}
                         >
                             <Button 
-                                title='Guardar'
-                                onPress={ () => {} }
+                                title='Camara'
+                                onPress={ takeProductPucture }
                                 color="#066EC2"
                             />
                             <Button 
-                                title='Guardar'
+                                title='Galeria'
                                 onPress={ () => {} }
                                 color="#066EC2"
                             />
@@ -118,9 +132,22 @@ export const ProductScreen = ({ route, navigation }: Props) => {
 
 
                 {
-                    img.length > 0 && (
+                    (img.length > 0 && !tempImage ) && (
                         <Image 
                             source={{ uri: img }}
+                            style={{
+                                marginTop: 10,
+                                height: 300,
+                                width: '100%'
+                            }}
+                        />
+                    )
+                }
+
+                {
+                    ( tempImage ) && (
+                        <Image 
+                            source={{ uri: tempImage }}
                             style={{
                                 marginTop: 10,
                                 height: 300,
