@@ -16,9 +16,9 @@ export const ProductScreen = ({ route, navigation }: Props) => {
 
     const { name = '', id = '' } = route.params
     const { categories } = useCategories()
-    const { loadProductById } = useContext( ProductsContext )
+    const { loadProductById, addProduct, updateProduct } = useContext( ProductsContext )
 
-    const { category, img, onChange, form, setFormValues } = useForm({
+    const { _id: productId, name: productName ,category, img, onChange, form, setFormValues } = useForm({
         _id: id,
         name: name,
         category: '',
@@ -27,9 +27,9 @@ export const ProductScreen = ({ route, navigation }: Props) => {
 
     useEffect(() => {
       navigation.setOptions({
-        title: name,
+        title: productName.length === 0 ? 'Producto': productName ,
       })
-    }, [])
+    }, [ productName ])
 
     useEffect( () => {
         loadProduct()
@@ -47,6 +47,15 @@ export const ProductScreen = ({ route, navigation }: Props) => {
         })
     }
 
+    const saveOrUpdateProduct = async() => {
+        if( id.length === 0 ){
+            const newProduct = await addProduct( category, productName )
+            onChange( newProduct._id, '_id' )
+        }else{
+            updateProduct( category, productName, productId )
+        }
+    }
+
     
     return (
         <View style={ styles.container }>
@@ -56,7 +65,7 @@ export const ProductScreen = ({ route, navigation }: Props) => {
                     placeholder='Ingrese el nombre'
                     placeholderTextColor='rgba(0,0,0,0.5)'
                     style={ styles.textInput }
-                    value={ name }
+                    value={ productName }
                     onChangeText={ ( value ) => onChange( value, 'name' ) }
                 />
                 <Text style={ styles.lablel }>Categoria:</Text>
@@ -79,29 +88,34 @@ export const ProductScreen = ({ route, navigation }: Props) => {
 
                 <Button 
                     title='Guardar'
-                    onPress={ () => {} }
+                    onPress={ saveOrUpdateProduct }
                     color="#066EC2"
                 />
 
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        gap: 10,
-                        justifyContent: 'center',
-                        marginTop: 10
-                    }}
-                >
-                    <Button 
-                        title='Guardar'
-                        onPress={ () => {} }
-                        color="#066EC2"
-                    />
-                    <Button 
-                        title='Guardar'
-                        onPress={ () => {} }
-                        color="#066EC2"
-                    />
-                </View>
+                {
+                    ( productId.length > 0 ) && (
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                gap: 10,
+                                justifyContent: 'center',
+                                marginTop: 10
+                            }}
+                        >
+                            <Button 
+                                title='Guardar'
+                                onPress={ () => {} }
+                                color="#066EC2"
+                            />
+                            <Button 
+                                title='Guardar'
+                                onPress={ () => {} }
+                                color="#066EC2"
+                            />
+                        </View>
+                    )
+                }
+
 
                 {
                     img.length > 0 && (

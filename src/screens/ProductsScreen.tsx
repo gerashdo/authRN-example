@@ -18,7 +18,7 @@ export const ProductsScreen = ({ navigation }: Props) => {
             <TouchableOpacity
                 style={{ marginRight: 20 }}
                 activeOpacity={ 0.7 }
-                onPress={ () => navigation.navigate('ProductScreen', { name: 'Nuevo producto' } )}
+                onPress={ () => navigation.navigate('ProductScreen', {} )}
             >
                 <Text>Agregar</Text>
             </TouchableOpacity>
